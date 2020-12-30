@@ -1,3 +1,6 @@
+import csv
+
+
 class HashTable():
     def __init__(self):
         self.max_question=30
@@ -45,8 +48,25 @@ class HashTable():
 
 if __name__ == '__main__':
     h=HashTable()
-    h['IIITMK-1']=('Sudheesh',[10,5,4,2,1,],40,20)
-    h['IIITMK-1']=('ananthan',[10,5,4,2,1,],40,20)
-    print(h['IIITMK-1'])
-    print(h['IIITMK-2'])
+    with open('AnswerSheet.csv', 'r') as sheet, open('Answer.csv', 'r') as answer:
+        datas = csv.DictReader(sheet)
+        ans = csv.DictReader(answer)
+        ans = [i for i in ans]
+        for data in datas:
+            student = []
+            regNo = data['Register No']
+            score = 0
+            negativeScore = 0
+            student.append(data['Name'])
+            for i in range(1, 11):
+                if ans[0][str(i)] == data[str(i)]:
+                    score += 1
+                else:
+                    negativeScore += 1
+            student.append(score)
+            student.append(negativeScore)
+            h[regNo]=student
 
+    for i in h.table:
+        print(i)
+    print(h['REG-002'])
