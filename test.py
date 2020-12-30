@@ -1,10 +1,9 @@
-def hash(key):
-    hash = 0
-    for i in key:
-        hash += ord(i)
-    return hash % 30
+import csv
 
-
-for i in range(0,30):
-    print(i,end='-')
-    print(hash('STD-'+str(i)))
+with open('AnswerSheet.csv','r') as sheet , open('Answer.csv','r') as answer:
+    datas=csv.DictReader(sheet)
+    ans=csv.DictReader(answer)
+    ans=[i for i in ans]
+    for data in datas:
+        for answerSheet in data:
+            print(data[answerSheet])
