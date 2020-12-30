@@ -1,21 +1,30 @@
 class HashTable():
     def __init__(self):
-        self.max_question=100
+        self.max_question=30
         self.table=[None] * self.max_question
-
     def __setitem__(self, key, value):
         hashKey=self.__hash(key)
         newhashKey=self.__check(hashKey)
         data = (hashKey,key,value)
-        self.table[newhashKey] = data
+        try:
+            if self.table[hashKey][1] != key:
+                self.table[newhashKey] = data
+            else:
+                print(f'Already added {key}')
+        except:
+            self.table[newhashKey] = data
 
     def __getitem__(self, key):
         newkey=self.__hash(key)
         if self.table[newkey] is not None and self.table[newkey][0] == newkey and self.table[newkey][1] == key :
             return self.table[newkey]
         else:
-            return 1
-
+            try:
+                while self.table[newkey][1] != key:
+                    newkey=self.__increment(newkey)
+            except:
+                return None
+            return self.table[newkey]
     def __hash(self,key):
         hash=0
         for i in key:
@@ -32,11 +41,12 @@ class HashTable():
             while self.table[key] is not None:
                 key=self.__increment(key)
             return key
-h= HashTable()
-h['STD-1'] = ('SUDHEESH',[10,4,3,2,1],96,4)
-h['STD-2'] = ('Ananthan',[10,4,3,2,1],96,4)
-print(h['STD-1'])
-print(h['STD-2'])
-for i in h.table:
-    print(i)
+
+
+if __name__ == '__main__':
+    h=HashTable()
+    h['IIITMK-1']=('Sudheesh',[10,5,4,2,1,],40,20)
+    h['IIITMK-1']=('ananthan',[10,5,4,2,1,],40,20)
+    print(h['IIITMK-1'])
+    print(h['IIITMK-2'])
 

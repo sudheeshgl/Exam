@@ -1,11 +1,10 @@
-a=[]
-for i in range(1,30):
-    s=0
-    i='STD'+str(i)
-    for j in i:
-        s += ord(j)
-    v=s%100
-    a.append(v)
+def hash(key):
+    hash = 0
+    for i in key:
+        hash += ord(i)
+    return hash % 30
 
 
-print(len(a))
+for i in range(0,30):
+    print(i,end='-')
+    print(hash('STD-'+str(i)))
