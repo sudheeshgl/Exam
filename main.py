@@ -1,10 +1,13 @@
 import csv
+from configparser import ConfigParser
 
+config = ConfigParser()
+config.read('config.txt')
 
 class HashTable():
     def __init__(self):
-        self.max_question=30
-        self.table=[None] * self.max_question
+        self.max_students = int(config.get('exam','Total Students'))
+        self.table=[None] * self.max_students
     def __setitem__(self, key, value):
         hashKey=self.__hash(key)
         newhashKey=self.__check(hashKey)
@@ -32,10 +35,10 @@ class HashTable():
         hash=0
         for i in key:
             hash+=ord(i)
-        return hash % self.max_question
+        return hash % self.max_students
 
     def __increment(self,key):
-        return (key + 1) % self.max_question
+        return (key + 1) % self.max_students
 
     def __check(self,key):
         if self.table[key] is None:
@@ -45,28 +48,59 @@ class HashTable():
                 key=self.__increment(key)
             return key
 
+    def Splitcategories(self):
+        categories = list(map(int, config.get('exam', 'categories').split(',')))
+        totalcat=0
+        for i in categories:
+            totalcat+=i
+        temp=[]
+        for category in categories:
+            temp.append(int(category*config.getint('exam','No of Question')/totalcat))
+        return temp
 
 if __name__ == '__main__':
     h=HashTable()
-    with open('AnswerSheet.csv', 'r') as sheet, open('Answer.csv', 'r') as answer:
+    with open(config.get('exam','Answer Sheet'), 'r') as sheet, open(config.get('exam','Answer'), 'r') as answer:
         datas = csv.DictReader(sheet)
         ans = csv.DictReader(answer)
         ans = [i for i in ans]
+        categories = h.Splitcategories()
+        print(categories)
         for data in datas:
             student = []
             regNo = data['Register No']
-            score = 0
-            negativeScore = 0
-            student.append(data['Name'])
-            for i in range(1, 11):
-                if ans[0][str(i)] == data[str(i)]:
-                    score += 1
+            TotalScore=TempScore=TotalNegativeScore=TempNegativeScore=count2=unAnswer=0
+            count=1
+            NegativeScore=[]
+            Score=[]
+            for i in range(1, int(config.getint('exam','No of Question')+1)):
+                if len(data[str(i)]) == 0:
+                    unAnswer+=1
+                    pass
+                elif ans[0][str(i)] == data[str(i)]:
+                    TotalScore += 1
+                    TempScore +=1
                 else:
-                    negativeScore += 1
-            student.append(score)
-            student.append(negativeScore)
+                    TotalNegativeScore += 1
+                    TempNegativeScore += 1
+                if count == categories[count2]:
+                    Score.append(TempScore)
+                    NegativeScore.append(TempNegativeScore)
+                    TempNegativeScore = 0
+                    TempScore = 0
+                    count2+=1
+                    count=0
+                count+=1
+
+            student.append(data['Name'])
+            student.append(Score)
+            student.append(NegativeScore)
+            student.append(TotalScore)
+            student.append(TotalNegativeScore)
+            student.append(unAnswer)
             h[regNo]=student
+
 
     for i in h.table:
         print(i)
-    print(h['REG-002'])
+
