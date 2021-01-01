@@ -1,6 +1,0 @@
-[exam]
-Total Students = 20
-No of Question = 10
-categories = 5,4,1
-Answer Sheet = AnswerSheet.csv
-Answer = Answer.csv
